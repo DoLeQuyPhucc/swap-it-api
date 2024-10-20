@@ -1,110 +1,97 @@
 const pool = require('../../config/database');
-const { DateTime } = require('luxon'); 
-const { deleteItem } = require('./Items.controller');
+const { DateTime } = require('luxon');
 
 module.exports = {
-    create: (data, callBack) => {
-        const postedDate = DateTime.fromFormat(data['posted-date'], 'd/M/yyyy').toSQLDate();
-        pool.query(
-            `INSERT INTO Items (seller_id, item_name, description, price, category,
-             quantity, posted_date, item_status) 
-            VALUES( ?, ? ,?, ?, ?, ?, ?, ?)`,
-            [
-        
-                data.seller_id,
-                data.item_name,
-                data.description,
-                data.price,
-                data.category,
-                data.quantity,
-                postedDate,
-                data.item_status
-                
-            ],
-            (error, results, fields) => {
-                if (error) {
-                    return callBack(error);
-                }
-                return callBack(null, results);
-            }
-        );
+    create: async (data) => {
+        try {
+            const postedDate = DateTime.fromFormat(data['posted-date'], 'd/M/yyyy').toSQLDate();
+            const [results] = await pool.query(
+                `INSERT INTO Items (seller_id, item_name, description, price, category,
+                 quantity, posted_date, item_status, image_Items) 
+                VALUES( ?, ? ,?, ?, ?, ?, ?, ?, ?)`,
+                [
+                    data.seller_id,
+                    data.item_name,
+                    data.description,
+                    data.price,
+                    data.category,
+                    data.quantity,
+                    postedDate,
+                    data.item_status,
+                    data.image_Items
+                ]
+            );
+            return results;
+        } catch (error) {
+            console.error('Error in create:', error);
+            throw error;
+        }
     },
-    getAll: (callBack) => {
-        pool.query(
-            `SELECT * FROM Items`,
-            [],
-            (error, results, fields) => {
-                if (error) {
-                    return callBack(error);
-                }
-                return callBack(null, results);
-            }
-        );
+    getAll: async () => {
+        try {
+            const [results] = await pool.query(`SELECT * FROM Items`);
+            return results;
+        } catch (error) {
+            console.error('Error in getAll:', error);
+            throw error;
+        }
     },
-    updateItem: (data, itemId, callBack) => {
-        const postedDate = DateTime.fromFormat(data['posted-date'], 'd/M/yyyy').toSQLDate();
-        pool.query(
-            `UPDATE Items SET seller_id = ?, item_name = ?, description = ?, price = ?, category = ?, quantity = ?, posted_date = ?, item_status = ? WHERE item_id = ?`,
-            [
-                data.seller_id,
-                data.item_name,
-                data.description,
-                data.price,
-                data.category,
-                data.quantity,
-                postedDate,
-                data.item_status,
-                itemId
-            ],
-            (error, results, fields) => {
-                if (error) {
-                    return callBack(error);
-                }
-                return callBack(null, results);
-            }
-        );
+    updateItem: async (data, itemId) => {
+        try {
+            const postedDate = DateTime.fromFormat(data['posted-date'], 'd/M/yyyy').toSQLDate();
+            const [results] = await pool.query(
+                `UPDATE Items SET seller_id = ?, item_name = ?, description = ?, price = ?, category = ?, quantity = ?, posted_date = ?, item_status = ?, image_Items = ? WHERE item_id = ?`,
+                [
+                    data.seller_id,
+                    data.item_name,
+                    data.description,
+                    data.price,
+                    data.category,
+                    data.quantity,
+                    postedDate,
+                    data.item_status,
+                    data.image_Items,
+                    itemId
+                ]
+            );
+            return results;
+        } catch (error) {
+            console.error('Error in updateItem:', error);
+            throw error;
+        }
     },
-    getItem: (itemId, callBack) => {
-        pool.query(
-            `SELECT * FROM Items WHERE item_id = ?`,
-            [itemId],
-            (error, results, fields) => {
-                if (error) {
-                    return callBack(error);
-                }
-                return callBack(null, results[0]);
-            }
-        );
+    getItem: async (itemId) => {
+        try {
+            const [results] = await pool.query(`SELECT * FROM Items WHERE item_id = ?`, [itemId]);
+            return results[0];
+        } catch (error) {
+            console.error('Error in getItem:', error);
+            throw error;
+        }
     },
-    deleteItemById: (itemId, callBack) => {
-        pool.query(
-            `DELETE FROM Items WHERE item_id = ?`,
-            [itemId],
-            (error, results, fields) => {
-                if (error) {
-                    return callBack(error);
-                }
-                return callBack(null, results[0]);
-            }
-        );
+    deleteItemById: async (itemId) => {
+        try {
+            const [results] = await pool.query(`DELETE FROM Items WHERE item_id = ?`, [itemId]);
+            return results[0];
+        } catch (error) {
+            console.error('Error in deleteItemById:', error);
+            throw error;
+        }
     },
-    searchItems: (searchTerm, callBack) => {
-        const query = `
-            SELECT * FROM Items 
-            WHERE item_name LIKE ? 
-            OR description LIKE ? 
-            OR category LIKE ?
-        `;
-        const likeSearchTerm = `%${searchTerm}%`;
-        pool.query(
-            query,
-            [likeSearchTerm, likeSearchTerm, likeSearchTerm],
-            (error, results, fields) => {
-                if (error) {
-                    return callBack(error);
-                }
-                return callBack(null, results);
-            }
-        );
+    searchItems: async (searchTerm) => {
+        try {
+            const query = `
+                SELECT * FROM Items 
+                WHERE item_name LIKE ? 
+                OR description LIKE ? 
+                OR category LIKE ?
+            `;
+            const likeSearchTerm = `%${searchTerm}%`;
+            const [results] = await pool.query(query, [likeSearchTerm, likeSearchTerm, likeSearchTerm]);
+            return results;
+        } catch (error) {
+            console.error('Error in searchItems:', error);
+            throw error;
+        }
     }
 };

@@ -1,9 +1,12 @@
 const {createItems, getAllItems, updateItemDetails, getItemByID, deleteItem} = require('./Items.controller');
+const authenticateToken = require('../../src/authMiddleware');
 const router = require('express').Router();
 
-router.post('/',createItems);
-router.get('/',getAllItems);
-router.put('/:id', updateItemDetails);
-router.get('/:id', getItemByID);
-router.delete('/:id', deleteItem);
+router.post('/items',authenticateToken,createItems);
+router.get('/items',authenticateToken,getAllItems);
+router.put('/items/:id', updateItemDetails);
+router.get('/items/:id', getItemByID);
+router.delete('/items/:id', deleteItem);
 module.exports = router;
+
+
