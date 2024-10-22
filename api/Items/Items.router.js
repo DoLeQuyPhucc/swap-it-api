@@ -2,7 +2,7 @@ const {createItems, getAllItems, updateItemDetails, getItemByID, deleteItem} = r
 const authenticateToken = require('../../src/authMiddleware');
 const router = require('express').Router();
 
-router.post('/items',authenticateToken,createItems);
+router.post('/items',createItems);
 router.get('/items',authenticateToken,getAllItems);
 router.put('/items/:id', updateItemDetails);
 router.get('/items/:id', getItemByID);

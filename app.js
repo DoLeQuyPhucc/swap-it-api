@@ -3,6 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const express = require('express');
+app.use(cors());
 //const app = express();
 const itemRouter = require('./api/Items/Items.router');
 const authRouter = require('./api/Users/Users.router');
@@ -23,6 +24,6 @@ app.use('/api/v1', transactionRouter);
 app.use('/api/v1', userPremiumPackages);
 // http://localhost:3000/api-docs/
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
-app.listen(3000, () => {
+server.listen(3000, () => {
   console.log('Server is running at PORT:', 3000);
 });
