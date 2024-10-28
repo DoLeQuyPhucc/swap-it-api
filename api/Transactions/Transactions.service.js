@@ -43,7 +43,7 @@ module.exports = {
     }
   },
 
-  update: async (data, transactionId) => {
+  update: async (data, transactionId, status) => {
     try {
       const [results] = await pool.query(
         `UPDATE Transactions 
@@ -55,12 +55,12 @@ module.exports = {
           data.item_buyer_id,
           data.item_seller_id,
           data.transaction_date,
-          data.transaction_status,
+          status,
           transactionId,
         ]
       );
 
-      if (data.transaction_status === "Completed") {
+      if (status === "Completed") {
         // Update the item statuses to "Sold"
         await pool.query(
           `UPDATE Items 
@@ -72,6 +72,20 @@ module.exports = {
       return results;
     } catch (error) {
       console.error("Error in update:", error);
+      throw error;
+    }
+  },
+  acceptTransaction: async (transactionId) => {
+    try {
+      const [results] = await pool.query(
+        `UPDATE Transactions 
+         SET transaction_status = 'Completed' 
+         WHERE transaction_id =?`,
+        [transactionId]
+      );
+      return results; // Return the result of the update
+    } catch (error) {
+      console.error("Error in acceptTransaction:", error);
       throw error;
     }
   },

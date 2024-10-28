@@ -7,6 +7,7 @@ const {
   deleteById,
   getByBuyerId,
   getBySellerId,
+  acceptTransaction,
 } = require("./Transactions.service");
 
 /**
@@ -365,13 +366,14 @@ const getAllByBuyerId = async (req, res) => {
   const buyerId = req.params.id;
   try {
     const results = await getByBuyerId(buyerId);
-    console.log(results);
 
     const data = await Promise.all(
       results.map(async (result) => {
-        console.log(result);
         const buyer_item = await getItem(result.item_buyer_id);
         const seller_item = await getItem(result.item_seller_id);
+        if ((buyer_item.item_status === "Sold" || seller_item.item_status === "Sold") && (result.transaction_status !== "Completed")) {
+          await update(result, result.transaction_id, "Not Completed");
+        }
         return {
           ...result,
           buyer_item,
@@ -396,13 +398,14 @@ const getAllBySellerId = async (req, res) => {
   const sellerId = req.params.id;
   try {
     const results = await getBySellerId(sellerId);
-    console.log(results);
 
     const data = await Promise.all(
       results.map(async (result) => {
-        console.log(result);
         const buyer_item = await getItem(result.item_buyer_id);
         const seller_item = await getItem(result.item_seller_id);
+        if ((buyer_item.item_status === "Sold" || seller_item.item_status === "Sold") && (result.transaction_status !== "Completed")) {
+          await update(result, result.transaction_id, "Not Completed");
+        }
         return {
           ...result,
           buyer_item,
@@ -424,6 +427,32 @@ const getAllBySellerId = async (req, res) => {
   }
 };
 
+const acceptTransactionId = async (req, res) => {
+  const transactionId = req.params.id;
+  try {
+    const transaction = await getById(transactionId);
+    console.log(transaction);
+    if (transaction.transaction_status === "Completed") {
+      return res.status(400).json({
+        success: 0,
+        message: "Transaction is already completed",
+      });
+    }
+    const results = await update(transaction, transactionId, 'Completed');
+    // const results = await acceptTransaction(transactionId);
+    return res.status(200).json({
+      success: 1,
+      message: "Transaction accepted successfully",
+      data: results,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: 0,
+      message: "Error: " + err.message,
+    });
+  }
+};
+
 module.exports = {
   createTransaction,
   getAllTransactions,
@@ -432,4 +461,5 @@ module.exports = {
   deleteTransaction,
   getAllByBuyerId,
   getAllBySellerId,
+  acceptTransactionId,
 };
