@@ -12,7 +12,7 @@ module.exports = {
           data.item_buyer_id,
           data.item_seller_id,
           data.transaction_date,
-          data.transaction_status,
+          "Pending",
         ]
       );
 
@@ -98,6 +98,34 @@ module.exports = {
       return results; // Return the result of the deletion
     } catch (error) {
       console.error("Error in deleteById:", error);
+      throw error;
+    }
+  },
+
+  // Get list of transactions by buyer_id
+  getByBuyerId: async (buyerId) => {
+    try {
+      const [results] = await pool.query(
+        `SELECT * FROM Transactions WHERE buyer_id = ?`,
+        [buyerId]
+      );
+      return results; // Return all transactions related to the buyer
+    } catch (error) {
+      console.error("Error in getByBuyerId:", error);
+      throw error;
+    }
+  },
+
+  // Get list of transactions by seller_id
+  getBySellerId: async (sellerId) => {
+    try {
+      const [results] = await pool.query(
+        `SELECT * FROM Transactions WHERE seller_id = ?`,
+        [sellerId]
+      );
+      return results; // Return all transactions related to the seller
+    } catch (error) {
+      console.error("Error in getBySellerId:", error);
       throw error;
     }
   },

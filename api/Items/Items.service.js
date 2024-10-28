@@ -84,6 +84,7 @@ module.exports = {
         WHERE Items.item_id = ?
       `;
       const [results] = await pool.query(query, [itemId]);
+      console.log("results", results);
       return results[0];
     } catch (error) {
       console.error("Error in getItem:", error);

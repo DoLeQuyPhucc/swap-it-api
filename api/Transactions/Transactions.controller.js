@@ -1,9 +1,12 @@
+const { getItem } = require("../Items/Items.service");
 const {
   create,
   getAll,
   getById,
   update,
   deleteById,
+  getByBuyerId,
+  getBySellerId,
 } = require("./Transactions.service");
 
 /**
@@ -358,10 +361,75 @@ const deleteTransaction = async (req, res) => {
   }
 };
 
+const getAllByBuyerId = async (req, res) => {
+  const buyerId = req.params.id;
+  try {
+    const results = await getByBuyerId(buyerId);
+    console.log(results);
+
+    const data = await Promise.all(
+      results.map(async (result) => {
+        console.log(result);
+        const buyer_item = await getItem(result.item_buyer_id);
+        const seller_item = await getItem(result.item_seller_id);
+        return {
+          ...result,
+          buyer_item,
+          seller_item,
+        };
+      })
+    );
+    return res.status(200).json({
+      success: 1,
+      message: "Transactions retrieved successfully",
+      data: data,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: 0,
+      message: "Error: " + err.message,
+    });
+  }
+};
+
+const getAllBySellerId = async (req, res) => {
+  const sellerId = req.params.id;
+  try {
+    const results = await getBySellerId(sellerId);
+    console.log(results);
+
+    const data = await Promise.all(
+      results.map(async (result) => {
+        console.log(result);
+        const buyer_item = await getItem(result.item_buyer_id);
+        const seller_item = await getItem(result.item_seller_id);
+        return {
+          ...result,
+          buyer_item,
+          seller_item,
+        };
+      })
+    );
+    console.log(data);
+    return res.status(200).json({
+      success: 1,
+      message: "Transactions retrieved successfully",
+      data: data,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: 0,
+      message: "Error: " + err.message,
+    });
+  }
+};
+
 module.exports = {
   createTransaction,
   getAllTransactions,
   getTransactionById,
   updateTransactionDetails,
   deleteTransaction,
+  getAllByBuyerId,
+  getAllBySellerId,
 };
