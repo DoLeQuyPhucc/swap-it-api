@@ -1,4 +1,12 @@
-const { create, getAll, updateItem, getItem, deleteItemById, searchItems } = require('./Items.service');
+const {
+  create,
+  getAll,
+  updateItem,
+  getItem,
+  deleteItemById,
+  searchItems,
+  getItemsBySellerId,
+} = require("./Items.service");
 
 /**
  * @swagger
@@ -80,20 +88,20 @@ const { create, getAll, updateItem, getItem, deleteItemById, searchItems } = req
  *                       example: 1
  */
 const createItems = async (req, res) => {
-    const body = req.body;
-    try {
-        const results = await create(body);
-        return res.status(200).json({
-            success: 1,
-            message: "Item created successfully",
-            data: results
-        });
-    } catch (err) {
-        return res.status(500).json({
-            success: 0,
-            message: "Error: " + err.message
-        });
-    }
+  const body = req.body;
+  try {
+    const results = await create(body);
+    return res.status(200).json({
+      success: 1,
+      message: "Item created successfully",
+      data: results,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: 0,
+      message: "Error: " + err.message,
+    });
+  }
 };
 
 /**
@@ -156,19 +164,19 @@ const createItems = async (req, res) => {
  *                     example: "http://example.com/image.jpg"
  */
 const getAllItems = async (req, res) => {
-    try {
-        const results = await getAll();
-        return res.status(200).json({
-            success: 1,
-            message: "Items retrieved successfully",
-            data: results
-        });
-    } catch (err) {
-        return res.status(500).json({
-            success: 0,
-            message: "Error: " + err.message
-        });
-    }
+  try {
+    const results = await getAll();
+    return res.status(200).json({
+      success: 1,
+      message: "Items retrieved successfully",
+      data: results,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: 0,
+      message: "Error: " + err.message,
+    });
+  }
 };
 
 /**
@@ -251,21 +259,21 @@ const getAllItems = async (req, res) => {
  *                       example: 1
  */
 const updateItemDetails = async (req, res) => {
-    const body = req.body;
-    const itemId = req.params.id;
-    try {
-        const results = await updateItem(body, itemId);
-        return res.status(200).json({
-            success: 1,
-            message: "Updated item successfully",
-            data: results
-        });
-    } catch (err) {
-        return res.status(500).json({
-            success: 0,
-            message: "Error: " + err.message
-        });
-    }
+  const body = req.body;
+  const itemId = req.params.id;
+  try {
+    const results = await updateItem(body, itemId);
+    return res.status(200).json({
+      success: 1,
+      message: "Updated item successfully",
+      data: results,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: 0,
+      message: "Error: " + err.message,
+    });
+  }
 };
 
 /**
@@ -333,20 +341,20 @@ const updateItemDetails = async (req, res) => {
  *                   example: "http://example.com/image.jpg"
  */
 const getItemByID = async (req, res) => {
-    const itemId = req.params.id;
-    try {
-        const results = await getItem(itemId);
-        return res.status(200).json({
-            success: 1,
-            message: "Item retrieved successfully",
-            data: results
-        });
-    } catch (err) {
-        return res.status(500).json({
-            success: 0,
-            message: "Error: " + err.message
-        });
-    }
+  const itemId = req.params.id;
+  try {
+    const results = await getItem(itemId);
+    return res.status(200).json({
+      success: 1,
+      message: "Item retrieved successfully",
+      data: results,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: 0,
+      message: "Error: " + err.message,
+    });
+  }
 };
 
 /**
@@ -384,20 +392,20 @@ const getItemByID = async (req, res) => {
  *                       example: 1
  */
 const deleteItem = async (req, res) => {
-    const itemId = req.params.id;
-    try {
-        const results = await deleteItemById(itemId);
-        return res.status(200).json({
-            success: 1,
-            message: "Item is deleted successfully",
-            data: results
-        });
-    } catch (err) {
-        return res.status(500).json({
-            success: 0,
-            message: "Error: " + err.message
-        });
-    }
+  const itemId = req.params.id;
+  try {
+    const results = await deleteItemById(itemId);
+    return res.status(200).json({
+      success: 1,
+      message: "Item is deleted successfully",
+      data: results,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: 0,
+      message: "Error: " + err.message,
+    });
+  }
 };
 
 /**
@@ -467,26 +475,51 @@ const deleteItem = async (req, res) => {
  *                     example: "http://example.com/image.jpg"
  */
 const searchItemsDetails = async (req, res) => {
-    const searchTerm = req.query.q;
-    try {
-        const results = await searchItems(searchTerm);
-        return res.status(200).json({
-            success: 1,
-            data: results
-        });
-    } catch (err) {
-        return res.status(500).json({
-            success: 0,
-            message: "Error: " + err.message
-        });
-    }
+  const searchTerm = req.query.q;
+  try {
+    const results = await searchItems(searchTerm);
+    return res.status(200).json({
+      success: 1,
+      data: results,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: 0,
+      message: "Error: " + err.message,
+    });
+  }
+};
+
+const itemsRequestExchange = async (req, res) => {
+  const itemId = req.params.itemId;
+  const sellerId = req.params.userId;
+  try {
+    const itemsBySellerId = await getItemsBySellerId(sellerId);
+    const itemExchange = await getItem(itemId);
+
+    const results = {
+      itemsBySellerId,
+      itemExchange,
+    };
+    return res.status(200).json({
+      success: 1,
+      message: "Item created successfully",
+      data: results,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: 0,
+      message: "Error: " + err.message,
+    });
+  }
 };
 
 module.exports = {
-    createItems,
-    getAllItems,
-    updateItemDetails,
-    getItemByID,
-    deleteItem,
-    searchItemsDetails
+  createItems,
+  getAllItems,
+  updateItemDetails,
+  getItemByID,
+  deleteItem,
+  searchItemsDetails,
+  itemsRequestExchange,
 };

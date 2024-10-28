@@ -5,6 +5,12 @@ npm-shrinkwrap.json
 *.log
 *.gz
 
+/EXE202.sql
+/EXE202.mwb
+
+# ignore file .env
+.env
+
 # Coveralls
 .nyc_output
 coverage
