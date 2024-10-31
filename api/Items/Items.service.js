@@ -4,23 +4,20 @@ const { DateTime } = require("luxon");
 module.exports = {
   create: async (data) => {
     try {
-      const postedDate = DateTime.fromFormat(
-        data["posted-date"],
-        "d/M/yyyy"
-      ).toSQLDate();
+      const postedDate = DateTime.fromFormat(data["posted-date"], "d/M/yyyy").toSQLDate();
       const [results] = await pool.query(
-        `INSERT INTO Items (seller_id, item_name, description, price, category,
-                 quantity, posted_date, item_status, image_Items) 
-                VALUES( ?, ? ,?, ?, ?, ?, ?, ?, ?)`,
-
+        `INSERT INTO Items (seller_id, item_name, description, price, category_id,
+                 quantity, posted_date, address, item_status, image_Items) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           data.seller_id,
           data.item_name,
           data.description,
           data.price,
-          data.category,
+          data.category_id,
           data.quantity,
           postedDate,
+          data.address,
           data.item_status,
           data.image_Items,
         ]
@@ -35,9 +32,10 @@ module.exports = {
   getAll: async () => {
     try {
       const query = `
-        SELECT Items.*, Users.name AS user_name, Users.image_user 
+        SELECT Items.*, Users.name AS user_name, Users.image_user, Categories.category_name 
         FROM Items 
         JOIN Users ON Items.seller_id = Users.user_id
+        LEFT JOIN Categories ON Items.category_id = Categories.category_id
       `;
       const [results] = await pool.query(query);
       return results;
@@ -47,22 +45,36 @@ module.exports = {
     }
   },
 
+  getItemByCategory: async (categoryId) => {
+    try {
+      const [results] = await pool.query(
+        `SELECT * FROM Items WHERE category_id = ?`,
+        [categoryId]
+      );
+      return results;
+    } catch (error) {
+      console.error("Error in getItemByCategory:", error);
+      throw error;
+    }
+  },
+
   updateItem: async (data, itemId) => {
     try {
-      const postedDate = DateTime.fromFormat(
-        data["posted-date"],
-        "d/M/yyyy"
-      ).toSQLDate();
+      const postedDate = DateTime.fromFormat(data["posted-date"], "d/M/yyyy").toSQLDate();
       const [results] = await pool.query(
-        `UPDATE Items SET seller_id = ?, item_name = ?, description = ?, price = ?, category = ?, quantity = ?, posted_date = ?, item_status = ?, image_Items = ? WHERE item_id = ?`,
+        `UPDATE Items SET seller_id = ?, item_name = ?, description = ?, price = ?, 
+                category_id = ?, quantity = ?, posted_date = ?, address = ?, 
+                item_status = ?, image_Items = ? 
+         WHERE item_id = ?`,
         [
           data.seller_id,
           data.item_name,
           data.description,
           data.price,
-          data.category,
+          data.category_id,
           data.quantity,
           postedDate,
+          data.address,
           data.item_status,
           data.image_Items,
           itemId,
@@ -78,13 +90,13 @@ module.exports = {
   getItem: async (itemId) => {
     try {
       const query = `
-        SELECT Items.*, Users.name AS user_name, Users.image_user 
+        SELECT Items.*, Users.name AS user_name, Users.image_user, Categories.category_name 
         FROM Items 
         JOIN Users ON Items.seller_id = Users.user_id
+        LEFT JOIN Categories ON Items.category_id = Categories.category_id
         WHERE Items.item_id = ?
       `;
       const [results] = await pool.query(query, [itemId]);
-      console.log("results", results);
       return results[0];
     } catch (error) {
       console.error("Error in getItem:", error);
@@ -98,7 +110,7 @@ module.exports = {
         `DELETE FROM Items WHERE item_id = ?`,
         [itemId]
       );
-      return results[0];
+      return results;
     } catch (error) {
       console.error("Error in deleteItemById:", error);
       throw error;
@@ -108,13 +120,14 @@ module.exports = {
   searchItems: async (searchTerm) => {
     try {
       const query = `
-                SELECT Items.*, Users.name AS user_name, Users.image_user 
-                FROM Items 
-                JOIN Users ON Items.seller_id = Users.user_id
-                WHERE item_name LIKE ? 
-                OR description LIKE ? 
-                OR category LIKE ?
-            `;
+        SELECT Items.*, Users.name AS user_name, Users.image_user, Categories.category_name 
+        FROM Items 
+        JOIN Users ON Items.seller_id = Users.user_id
+        LEFT JOIN Categories ON Items.category_id = Categories.category_id
+        WHERE item_name LIKE ? 
+        OR description LIKE ? 
+        OR Categories.category_name LIKE ?
+      `;
       const likeSearchTerm = `%${searchTerm}%`;
       const [results] = await pool.query(query, [
         likeSearchTerm,
@@ -131,12 +144,15 @@ module.exports = {
   getItemsBySellerId: async (sellerId) => {
     try {
       const [results] = await pool.query(
-        `SELECT Items.*, Users.name AS user_name, Users.image_user 
+        `SELECT Items.*, Users.name AS user_name, Users.image_user, Categories.category_name 
          FROM Items 
-         JOIN Users ON Items.seller_id = Users.user_id 
+         JOIN Users ON Items.seller_id = Users.user_id
+         LEFT JOIN Categories ON Items.category_id = Categories.category_id 
          WHERE Items.seller_id = ?`,
         [sellerId]
       );
+      console.log(sellerId)
+      console.log(results);
       return results;
     } catch (error) {
       console.error("Error in getItemsBySellerId:", error);

@@ -514,6 +514,26 @@ const itemsRequestExchange = async (req, res) => {
   }
 };
 
+//get Item by sellerId 
+
+const getItemsByUserId = async (req, res) => {
+  const sellerId = req.params.sellerId;
+  try {
+    const itemsBySellerId = await getItemsBySellerId(sellerId);
+
+    return res.status(200).json({
+      success: 1,
+      message: "Item created successfully",
+      data: itemsBySellerId,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: 0,
+      message: "Error: " + err.message,
+    });
+  }
+};
+
 module.exports = {
   createItems,
   getAllItems,
@@ -522,4 +542,5 @@ module.exports = {
   deleteItem,
   searchItemsDetails,
   itemsRequestExchange,
+  getItemsByUserId,
 };

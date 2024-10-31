@@ -5,6 +5,7 @@ const {
   getItemByID,
   deleteItem,
   itemsRequestExchange,
+  getItemsByUserId,
 } = require("./Items.controller");
 const authenticateToken = require("../../src/authMiddleware");
 const router = require("express").Router();
@@ -15,5 +16,6 @@ router.put("/items/:id", updateItemDetails);
 router.get("/items/:id", getItemByID);
 router.delete("/items/:id", deleteItem);
 router.get("/items/exchange/:userId&:itemId", itemsRequestExchange);
+router.get("/items/user/:sellerId", getItemsByUserId);
 
 module.exports = router;
