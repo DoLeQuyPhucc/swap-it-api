@@ -6,7 +6,7 @@ module.exports = {
     try {
       const postedDate = DateTime.fromFormat(data["posted-date"], "d/M/yyyy").toSQLDate();
       const [results] = await pool.query(
-        `INSERT INTO Items (seller_id, item_name, description, price, category_id,
+        `INSERT INTO EXE202_giftfallto.Items (seller_id, item_name, description, price, category_id,
                  quantity, posted_date, address, item_status, image_Items) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
@@ -33,8 +33,8 @@ module.exports = {
     try {
       const query = `
         SELECT Items.*, Users.name AS user_name, Users.image_user, Categories.category_name 
-        FROM Items 
-        JOIN Users ON Items.seller_id = Users.user_id
+        FROM EXE202_giftfallto.Items 
+        JOIN EXE202_giftfallto.Users ON Items.seller_id = Users.user_id
         LEFT JOIN Categories ON Items.category_id = Categories.category_id
       `;
       const [results] = await pool.query(query);
@@ -48,7 +48,7 @@ module.exports = {
   getItemByCategory: async (categoryId) => {
     try {
       const [results] = await pool.query(
-        `SELECT * FROM Items WHERE category_id = ?`,
+        `SELECT * FROM EXE202_giftfallto.Items WHERE category_id = ?`,
         [categoryId]
       );
       return results;
@@ -62,7 +62,7 @@ module.exports = {
     try {
       const postedDate = DateTime.fromFormat(data["posted-date"], "d/M/yyyy").toSQLDate();
       const [results] = await pool.query(
-        `UPDATE Items SET seller_id = ?, item_name = ?, description = ?, price = ?, 
+        `UPDATE EXE202_giftfallto.Items SET seller_id = ?, item_name = ?, description = ?, price = ?, 
                 category_id = ?, quantity = ?, posted_date = ?, address = ?, 
                 item_status = ?, image_Items = ? 
          WHERE item_id = ?`,
@@ -91,8 +91,8 @@ module.exports = {
     try {
       const query = `
         SELECT Items.*, Users.name AS user_name, Users.image_user, Categories.category_name 
-        FROM Items 
-        JOIN Users ON Items.seller_id = Users.user_id
+        FROM EXE202_giftfallto.Items 
+        JOIN EXE202_giftfallto.Users ON Items.seller_id = Users.user_id
         LEFT JOIN Categories ON Items.category_id = Categories.category_id
         WHERE Items.item_id = ?
       `;
@@ -107,7 +107,7 @@ module.exports = {
   deleteItemById: async (itemId) => {
     try {
       const [results] = await pool.query(
-        `DELETE FROM Items WHERE item_id = ?`,
+        `DELETE FROM EXE202_giftfallto.Items WHERE item_id = ?`,
         [itemId]
       );
       return results;
@@ -121,9 +121,9 @@ module.exports = {
     try {
       const query = `
         SELECT Items.*, Users.name AS user_name, Users.image_user, Categories.category_name 
-        FROM Items 
-        JOIN Users ON Items.seller_id = Users.user_id
-        LEFT JOIN Categories ON Items.category_id = Categories.category_id
+        FROM EXE202_giftfallto.Items 
+        JOIN EXE202_giftfallto.Users ON Items.seller_id = Users.user_id
+        LEFT JOIN EXE202_giftfallto.Categories ON Items.category_id = Categories.category_id
         WHERE item_name LIKE ? 
         OR description LIKE ? 
         OR Categories.category_name LIKE ?
@@ -145,8 +145,8 @@ module.exports = {
     try {
       const [results] = await pool.query(
         `SELECT Items.*, Users.name AS user_name, Users.image_user, Categories.category_name 
-         FROM Items 
-         JOIN Users ON Items.seller_id = Users.user_id
+         FROM EXE202_giftfallto.Items 
+         JOIN EXE202_giftfallto.Users ON Items.seller_id = Users.user_id
          LEFT JOIN Categories ON Items.category_id = Categories.category_id 
          WHERE Items.seller_id = ?`,
         [sellerId]

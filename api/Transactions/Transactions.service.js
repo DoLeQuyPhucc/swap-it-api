@@ -4,7 +4,7 @@ module.exports = {
   create: async (data) => {
     try {
       const [results] = await pool.query(
-        `INSERT INTO Transactions (buyer_id, seller_id, item_buyer_id, item_seller_id, transaction_date, transaction_status) 
+        `INSERT INTO EXE202_giftfallto.Transactions (buyer_id, seller_id, item_buyer_id, item_seller_id, transaction_date, transaction_status) 
          VALUES (?, ?, ?, ?, ?, ?)`,
         [
           data.buyer_id,
@@ -19,7 +19,7 @@ module.exports = {
       if (data.transaction_status === "Completed") {
         // Update the item statuses to "Sold"
         await pool.query(
-          `UPDATE Items 
+          `UPDATE EXE202_giftfallto.Items 
            SET item_status = 'Sold' 
            WHERE item_id IN (?, ?)`,
           [data.item_buyer_id, data.item_seller_id]
@@ -35,7 +35,7 @@ module.exports = {
 
   getAll: async () => {
     try {
-      const [results] = await pool.query(`SELECT * FROM Transactions`);
+      const [results] = await pool.query(`SELECT * FROM EXE202_giftfallto.Transactions`);
       return results;
     } catch (error) {
       console.error("Error in getAll:", error);
@@ -46,7 +46,7 @@ module.exports = {
   update: async (data, transactionId, status) => {
     try {
       const [results] = await pool.query(
-        `UPDATE Transactions 
+        `UPDATE EXE202_giftfallto.Transactions 
          SET buyer_id = ?, seller_id = ?, item_buyer_id = ?, item_seller_id = ?, transaction_date = ?, transaction_status = ? 
          WHERE transaction_id = ?`,
         [
@@ -63,7 +63,7 @@ module.exports = {
       if (status === "Completed") {
         // Update the item statuses to "Sold"
         await pool.query(
-          `UPDATE Items 
+          `UPDATE EXE202_giftfallto.Items 
            SET item_status = 'Sold' 
            WHERE item_id IN (?, ?)`,
           [data.item_buyer_id, data.item_seller_id]
@@ -78,7 +78,7 @@ module.exports = {
   acceptTransaction: async (transactionId) => {
     try {
       const [results] = await pool.query(
-        `UPDATE Transactions 
+        `UPDATE EXE202_giftfallto.Transactions 
          SET transaction_status = 'Completed' 
          WHERE transaction_id =?`,
         [transactionId]
@@ -93,7 +93,7 @@ module.exports = {
   getById: async (transactionId) => {
     try {
       const [results] = await pool.query(
-        `SELECT * FROM Transactions WHERE transaction_id = ?`,
+        `SELECT * FROM EXE202_giftfallto.Transactions WHERE transaction_id = ?`,
         [transactionId]
       );
       return results[0]; // Return the first result if it exists
@@ -106,7 +106,7 @@ module.exports = {
   deleteById: async (transactionId) => {
     try {
       const [results] = await pool.query(
-        `DELETE FROM Transactions WHERE transaction_id = ?`,
+        `DELETE FROM EXE202_giftfallto.Transactions WHERE transaction_id = ?`,
         [transactionId]
       );
       return results; // Return the result of the deletion
@@ -120,7 +120,7 @@ module.exports = {
   getByBuyerId: async (buyerId) => {
     try {
       const [results] = await pool.query(
-        `SELECT * FROM Transactions WHERE buyer_id = ?`,
+        `SELECT * FROM EXE202_giftfallto.Transactions WHERE buyer_id = ?`,
         [buyerId]
       );
       return results; // Return all transactions related to the buyer
@@ -134,7 +134,7 @@ module.exports = {
   getBySellerId: async (sellerId) => {
     try {
       const [results] = await pool.query(
-        `SELECT * FROM Transactions WHERE seller_id = ?`,
+        `SELECT * FROM EXE202_giftfallto.Transactions WHERE seller_id = ?`,
         [sellerId]
       );
       return results; // Return all transactions related to the seller

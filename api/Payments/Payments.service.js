@@ -4,7 +4,7 @@ module.exports = {
     create: async (data) => {
         try {
             const [results] = await pool.query(
-                `INSERT INTO Payments (transaction_id, payment_method, amount, payment_status) VALUES (?, ?, ?, ?)`,
+                `INSERT INTO EXE202_giftfallto.Payments (transaction_id, payment_method, amount, payment_status) VALUES (?, ?, ?, ?)`,
                 [data.transaction_id, data.payment_method, data.amount, data.payment_status]
             );
             return results;
@@ -14,7 +14,7 @@ module.exports = {
     },
     getAll: async () => {
         try {
-            const [results] = await pool.query(`SELECT * FROM Payments`);
+            const [results] = await pool.query(`SELECT * FROM EXE202_giftfallto.Payments`);
             return results;
         } catch (error) {
             throw error;
@@ -23,7 +23,7 @@ module.exports = {
     update: async (data, paymentId) => {
         try {
             const [results] = await pool.query(
-                `UPDATE Payments SET transaction_id = ?, payment_method = ?, amount = ?, payment_status = ? WHERE payment_id = ?`,
+                `UPDATE EXE202_giftfallto.Payments SET transaction_id = ?, payment_method = ?, amount = ?, payment_status = ? WHERE payment_id = ?`,
                 [data.transaction_id, data.payment_method, data.amount, data.payment_status, paymentId]
             );
             return results;
@@ -33,7 +33,7 @@ module.exports = {
     },
     getById: async (paymentId) => {
         try {
-            const [results] = await pool.query(`SELECT * FROM Payments WHERE payment_id = ?`, [paymentId]);
+            const [results] = await pool.query(`SELECT * FROM EXE202_giftfallto.Payments WHERE payment_id = ?`, [paymentId]);
             return results[0];
         } catch (error) {
             throw error;
@@ -41,7 +41,7 @@ module.exports = {
     },
     deleteById: async (paymentId) => {
         try {
-            const [results] = await pool.query(`DELETE FROM Payments WHERE payment_id = ?`, [paymentId]);
+            const [results] = await pool.query(`DELETE FROM EXE202_giftfallto.Payments WHERE payment_id = ?`, [paymentId]);
             return results[0];
         } catch (error) {
             throw error;

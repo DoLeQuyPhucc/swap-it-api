@@ -56,13 +56,15 @@ const {
  *         description: Invalid email or password
  */
 const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { email } = req.body;
 
-  const user = await validateUser(email, password);
+  const user = await validateUser(email);
+  
   if (user) {
-    const accessToken = generateAccessToken({ id: user.user_id, username: user.name });
-    const refreshToken = await generateRefreshToken({ user_id: user.user_id, name: user.name });
-    res.json({ accessToken, refreshToken });
+    console.log(user);
+    user_id = user.user_id;
+    console.log(user_id);
+    res.status(200).json({ message: "Login Successfully", user_id:  user_id});
   } else {
     res.status(400).send('Invalid email or password');
   }

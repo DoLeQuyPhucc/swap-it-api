@@ -4,7 +4,7 @@ module.exports = {
     create: async (data) => {
         try {
             const [results] = await pool.query(
-                `INSERT INTO Message (user_id, receiver_id, message, timestamp) VALUES (?, ?, ?, ?)`,
+                `INSERT INTO EXE202_giftfallto.Message (user_id, receiver_id, message, timestamp) VALUES (?, ?, ?, ?)`,
                 [data.user_id, data.receiver_id, data.message, data.timestamp]
             );
             return results;
@@ -14,7 +14,7 @@ module.exports = {
     },
     getAll: async () => {
         try {
-            const [results] = await pool.query(`SELECT * FROM Message`);
+            const [results] = await pool.query(`SELECT * FROM EXE202_giftfallto.Message`);
             return results;
         } catch (error) {
             throw error;
@@ -23,7 +23,7 @@ module.exports = {
     update: async (data, messageId) => {
         try {
             const [results] = await pool.query(
-                `UPDATE Message SET user_id = ?, receiver_id = ?, message = ?, timestamp = ? WHERE id = ?`,
+                `UPDATE EXE202_giftfallto.EXE202_giftfallto.Message SET user_id = ?, receiver_id = ?, message = ?, timestamp = ? WHERE id = ?`,
                 [data.user_id, data.receiver_id, data.message, data.timestamp, messageId]
             );
             return results;
@@ -33,7 +33,7 @@ module.exports = {
     },
     getById: async (messageId) => {
         try {
-            const [results] = await pool.query(`SELECT * FROM Message WHERE id = ?`, [messageId]);
+            const [results] = await pool.query(`SELECT * FROM EXE202_giftfallto.Message WHERE id = ?`, [messageId]);
             return results[0];
         } catch (error) {
             throw error;
@@ -41,7 +41,7 @@ module.exports = {
     },
     deleteById: async (messageId) => {
         try {
-            const [results] = await pool.query(`DELETE FROM Message WHERE id = ?`, [messageId]);
+            const [results] = await pool.query(`DELETE FROM EXE202_giftfallto.Message WHERE id = ?`, [messageId]);
             return results[0];
         } catch (error) {
             throw error;

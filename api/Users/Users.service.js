@@ -15,16 +15,15 @@ const generateRefreshToken = async (user) => {
   return refreshToken;
 };
 
-const validateUser = async (email, password) => {
+const validateUser = async (email) => {
   try {
-    const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+    const [rows] = await db.query('SELECT * FROM EXE202_giftfallto.Users WHERE email = ?', [email]);
     if (rows.length === 0) {
       return false;
     }
 
     const user = rows[0];
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    return isPasswordValid ? user : false;
+    return user
   } catch (err) {
     console.error(err);
     return false;
@@ -101,7 +100,7 @@ const updateUser = async (user_id, name, is_premium, image_user, password) => {
 };
 const getUser = async (user_id) => {
   
-  return await db.query('SELECT * FROM users WHERE user_id = ?', [user_id]);
+  return await db.query('SELECT * FROM FROM EXE202_giftfallto.Users WHERE user_id = ?', [user_id]);
 }
 module.exports = {
   generateAccessToken,
