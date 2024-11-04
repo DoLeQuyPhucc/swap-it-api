@@ -67,15 +67,11 @@ const revokeRefreshToken = async (token) => {
   await db.query("DELETE FROM refresh_tokens WHERE token = ?", [token]);
 };
 
-const registerUser = async (name, email, password, confirmPassword) => {
+const registerUser = async (name, email) => {
   try {
-    if (password !== confirmPassword) {
-      throw new Error("Passwords do not match");
-    }
-    const hashedPassword = await bcrypt.hash(password, 10);
     const [result] = await db.query(
-      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-      [name, email, hashedPassword]
+      "INSERT INTO Users (name, email, is_premium, premium_expiry_date, image_user) VALUES (?, ?, ?, ?, ?)",
+      [name, email, 0, null, ""]
     );
     return { user_id: result.insertId, name, email };
   } catch (err) {
@@ -83,6 +79,7 @@ const registerUser = async (name, email, password, confirmPassword) => {
     throw new Error("User registration failed");
   }
 };
+
 const updateUser = async (user_id, name, is_premium, image_user, password) => {
   try {
     const updates = [];
