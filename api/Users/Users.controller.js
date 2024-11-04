@@ -6,7 +6,7 @@ const {
   revokeRefreshToken,
   registerUser,
   updateUser,
-} = require('./Users.service');
+} = require("./Users.service");
 
 /**
  * @swagger
@@ -58,15 +58,14 @@ const {
 const login = async (req, res) => {
   const { email } = req.body;
 
+  console.log(email);
+
   const user = await validateUser(email);
-  
+
   if (user) {
-    console.log(user);
-    user_id = user.user_id;
-    console.log(user_id);
-    res.status(200).json({ message: "Login Successfully", user_id:  user_id});
+    res.status(200).json({ message: "Login Successfully", user: user });
   } else {
-    res.status(400).send('Invalid email or password');
+    res.status(400).send("Invalid email or password");
   }
 };
 
@@ -169,7 +168,7 @@ const logout = async (req, res) => {
  *                 type: string
  *                 description: The user's confirm password
  *                 example: password123
- * 
+ *
  *     responses:
  *       201:
  *         description: User registered successfully
@@ -265,7 +264,13 @@ const update = async (req, res) => {
   const user_id = req.params.id;
 
   try {
-    const user = await updateUser(user_id, name, is_premium, image_user, password);
+    const user = await updateUser(
+      user_id,
+      name,
+      is_premium,
+      image_user,
+      password
+    );
     res.status(200).json(user);
   } catch (err) {
     res.status(500).send(err.message);

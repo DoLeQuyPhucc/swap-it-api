@@ -4,7 +4,10 @@ const { DateTime } = require("luxon");
 module.exports = {
   create: async (data) => {
     try {
-      const postedDate = DateTime.fromFormat(data["posted-date"], "d/M/yyyy").toSQLDate();
+      const postedDate = DateTime.fromFormat(
+        data["posted-date"],
+        "d/M/yyyy"
+      ).toSQLDate();
       const [results] = await pool.query(
         `INSERT INTO EXE202_giftfallto.Items (seller_id, item_name, description, price, category_id,
                  quantity, posted_date, address, item_status, image_Items) 
@@ -32,12 +35,30 @@ module.exports = {
   getAll: async () => {
     try {
       const query = `
-        SELECT Items.*, Users.name AS user_name, Users.image_user, Categories.category_name 
+        SELECT Items.*, Users.name AS user_name, Users.image_user, Categories.category_name
         FROM EXE202_giftfallto.Items 
         JOIN EXE202_giftfallto.Users ON Items.seller_id = Users.user_id
         LEFT JOIN Categories ON Items.category_id = Categories.category_id
+        `;
+
+      const query2 = `
+      SELECT i.item_id, i.image_url
+      FROM EXE202_giftfallto.Item_images i
       `;
+
       const [results] = await pool.query(query);
+
+      const [results2] = await pool.query(query2);
+
+      //push image url to result.item_images ([]) if item_id is the same
+      results.forEach((item) => {
+        item.item_images = [];
+        results2.forEach((image) => {
+          if (item.item_id === image.item_id) {
+            item.item_images.push(image.image_url);
+          }
+        });
+      });
       return results;
     } catch (error) {
       console.error("Error in getAll:", error);
@@ -60,7 +81,10 @@ module.exports = {
 
   updateItem: async (data, itemId) => {
     try {
-      const postedDate = DateTime.fromFormat(data["posted-date"], "d/M/yyyy").toSQLDate();
+      const postedDate = DateTime.fromFormat(
+        data["posted-date"],
+        "d/M/yyyy"
+      ).toSQLDate();
       const [results] = await pool.query(
         `UPDATE EXE202_giftfallto.Items SET seller_id = ?, item_name = ?, description = ?, price = ?, 
                 category_id = ?, quantity = ?, posted_date = ?, address = ?, 
@@ -96,7 +120,17 @@ module.exports = {
         LEFT JOIN Categories ON Items.category_id = Categories.category_id
         WHERE Items.item_id = ?
       `;
+
+      const query2 = `
+      SELECT i.item_id, i.image_url
+      FROM EXE202_giftfallto.Item_images i
+      WHERE i.item_id = ?
+      `;
+
+      const [results2] = await pool.query(query2, [itemId]);
       const [results] = await pool.query(query, [itemId]);
+
+      results[0].item_images = results2.map((image) => image.image_url);
       return results[0];
     } catch (error) {
       console.error("Error in getItem:", error);
@@ -151,7 +185,7 @@ module.exports = {
          WHERE Items.seller_id = ?`,
         [sellerId]
       );
-      console.log(sellerId)
+      console.log(sellerId);
       console.log(results);
       return results;
     } catch (error) {
