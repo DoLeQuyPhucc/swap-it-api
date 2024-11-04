@@ -193,11 +193,11 @@ const logout = async (req, res) => {
  *         description: Internal server error
  */
 const register = async (req, res) => {
-  const { name, email, password, confirmPassword } = req.body;
+  const { name, email } = req.body;
 
   try {
-    const user = await registerUser(name, email, password, confirmPassword);
-    res.status(201).json(user);
+    const user = await registerUser(name, email);
+    res.status(201).json(user);    
   } catch (err) {
     res.status(500).send(err.message);
   }
