@@ -185,6 +185,24 @@ module.exports = {
          WHERE Items.seller_id = ?`,
         [sellerId]
       );
+
+      const query2 = `
+      SELECT i.item_id, i.image_url
+      FROM EXE202_giftfallto.Item_images i
+      `;
+
+      const [results2] = await pool.query(query2);
+
+      //push image url to result.item_images ([]) if item_id is the same
+      results.forEach((item) => {
+        item.item_images = [];
+        results2.forEach((image) => {
+          if (item.item_id === image.item_id) {
+            item.item_images.push(image.image_url);
+          }
+        });
+      });
+
       console.log(sellerId);
       console.log(results);
       return results;
