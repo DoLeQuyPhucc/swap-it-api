@@ -279,9 +279,10 @@ const update = async (req, res) => {
 };
 /**
  * @swagger
- * /users:
+ * /api/v1/users:
  *   get:
  *     summary: Retrieve a list of users
+ *     tags: [Users]
  *     description: Retrieve a list of all users from the database.
  *     responses:
  *       200:
