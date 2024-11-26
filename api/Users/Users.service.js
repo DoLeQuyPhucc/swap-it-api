@@ -121,11 +121,11 @@ const getUser = async (user_id) => {
     [user_id]
   );
 };
-const getAll = async()  => {
-  return await db.query(
-    "SELECT * FROM EXE202_giftfallto.Users"
-  )
-}
+const getAll = async () => {
+  const query = 'SELECT * FROM EXE202_giftfallto.Users';
+  const [rows] = await db.query(query);
+  return rows;
+};
 module.exports = {
   generateAccessToken,
   generateRefreshToken,

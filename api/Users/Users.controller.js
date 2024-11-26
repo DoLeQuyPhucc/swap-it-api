@@ -309,7 +309,10 @@ const update = async (req, res) => {
 const getAllUsers = async (req, res) => {
   try {
     const users = await getAll();
-    res.status(200).json(users);
+    res.status(200).json({
+      success: 1,
+      message: "Users retrived successfully",
+      data: users});
   } catch (err) {
     res.status(500).send(err.message);
   }
