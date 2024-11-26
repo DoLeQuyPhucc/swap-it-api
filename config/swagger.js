@@ -7,11 +7,11 @@ const options = {
     info: {
       title: 'API Documentation',
       version: '1.0.0',
-      description: 'API documentation for the Node.js application',
+      description: 'API documentation for the SwapIt API',
     },
     servers: [
       {
-        url: 'http://localhost:3000',
+        url: 'http://localhost:3001',
       },
     ],
   },

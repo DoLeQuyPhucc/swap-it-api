@@ -121,6 +121,11 @@ const getUser = async (user_id) => {
     [user_id]
   );
 };
+const getAll = async()  => {
+  return await db.query(
+    "SELECT * FROM EXE202_giftfallto.Users"
+  )
+}
 module.exports = {
   generateAccessToken,
   generateRefreshToken,
@@ -129,4 +134,5 @@ module.exports = {
   revokeRefreshToken,
   registerUser,
   updateUser,
+  getAll,
 };

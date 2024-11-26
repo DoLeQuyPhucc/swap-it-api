@@ -6,6 +6,7 @@ const {
   revokeRefreshToken,
   registerUser,
   updateUser,
+  getAll,
 } = require("./Users.service");
 
 /**
@@ -276,5 +277,42 @@ const update = async (req, res) => {
     res.status(500).send(err.message);
   }
 };
+/**
+ * @swagger
+ * /api/v1/users:
+ *   get:
+ *     summary: Retrieve a list of users
+ *     tags: [Users]
+ *     description: Retrieve a list of all users from the database.
+ *     responses:
+ *       200:
+ *         description: A list of users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   name:
+ *                     type: string
+ *                     example: John Doe
+ *                   email:
+ *                     type: string
+ *                     example: johndoe@example.com
+ *       500:
+ *         description: Server error
+ */
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await getAll();
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+}
 
-module.exports = { login, refreshTokenController, logout, register, update };
+module.exports = { login, refreshTokenController, logout, register, update, getAllUsers };
