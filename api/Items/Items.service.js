@@ -4,14 +4,15 @@ const { DateTime } = require("luxon");
 module.exports = {
   create: async (data) => {
     try {
-      const postedDate = DateTime.fromFormat(
-        data["posted-date"],
-        "d/M/yyyy"
-      ).toSQLDate();
+      // Lưu mục vào bảng Items
+      const posted_date = new Date()
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " ");
       const [results] = await pool.query(
-        `INSERT INTO EXE202_giftfallto.Items (seller_id, item_name, description, price, category_id,
-                 quantity, posted_date, address, item_status, image_Items) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO EXE202_giftfallto.Items 
+          (seller_id, item_name, description, price, category_id, quantity, posted_date, address, item_status) 
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           data.seller_id,
           data.item_name,
@@ -19,16 +20,35 @@ module.exports = {
           data.price,
           data.category_id,
           data.quantity,
-          postedDate,
+          posted_date,
           data.address,
           data.item_status,
-          data.image_Items,
         ]
       );
+
+      const itemId = results.insertId; // Lấy ID của mục vừa tạo
+
+      // Lưu hình ảnh vào bảng item_Images
+      const uploadedDate = new Date()
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " ");
+      const imageQueries = data.image_Items.map((image) => [
+        itemId,
+        image,
+        uploadedDate,
+      ]);
+
+      await pool.query(
+        `INSERT INTO EXE202_giftfallto.Item_images (item_id, image_url, uploaded_date) VALUES ?`,
+        [imageQueries]
+      );
+
       return results;
     } catch (error) {
       console.error("Error in create:", error);
       throw error;
+    } finally {
     }
   },
 

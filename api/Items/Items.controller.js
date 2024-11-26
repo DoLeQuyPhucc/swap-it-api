@@ -514,7 +514,7 @@ const itemsRequestExchange = async (req, res) => {
   }
 };
 
-//get Item by sellerId 
+//get Item by sellerId
 
 const getItemsByUserId = async (req, res) => {
   const sellerId = req.params.sellerId;
