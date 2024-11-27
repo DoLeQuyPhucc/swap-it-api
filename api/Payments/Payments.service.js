@@ -4,8 +4,8 @@ module.exports = {
     create: async (data) => {
         try {
             const [results] = await pool.query(
-                `INSERT INTO EXE202_giftfallto.Payments (transaction_id, payment_method, amount, payment_status) VALUES (?, ?, ?, ?)`,
-                [data.transaction_id, data.payment_method, data.amount, data.payment_status]
+                `INSERT INTO EXE202_giftfallto.Payments ( payment_method, amount, payment_status,user_id) VALUES (?, ?, ?,?)`,
+                [ data.payment_method, data.amount, data.payment_status, data.user_id]
             );
             return results;
         } catch (error) {
@@ -14,7 +14,9 @@ module.exports = {
     },
     getAll: async () => {
         try {
-            const [results] = await pool.query(`SELECT * FROM EXE202_giftfallto.Payments`);
+            const [results] = await pool.query(`SELECT EXE202_giftfallto.Payments.payment_id, EXE202_giftfallto.Payments.payment_method, EXE202_giftfallto.Payments.amount, EXE202_giftfallto.Payments.payment_status, EXE202_giftfallto.Users.name, EXE202_giftfallto.Users.email
+                                                FROM EXE202_giftfallto.Payments
+                                                JOIN EXE202_giftfallto.Users ON EXE202_giftfallto.Payments.user_id = EXE202_giftfallto.Users.user_id`);
             return results;
         } catch (error) {
             throw error;
