@@ -117,12 +117,18 @@ const updateUser = async (user_id, name, is_premium, image_user, password) => {
 };
 const getUser = async (user_id) => {
   return await db.query(
-    "SELECT * FROM FROM EXE202_giftfallto.Users WHERE user_id = ?",
+    "SELECT * FROM EXE202_giftfallto.Users WHERE user_id = ?",
     [user_id]
   );
 };
+const getUserByEmail = async (email) => {
+  return await db.query(
+    "SELECT * FROM EXE202_giftfallto.Users WHERE email like ?",
+    [email]
+  );
+};
 const getAll = async () => {
-  const query = 'SELECT * FROM EXE202_giftfallto.Users';
+  const query = "SELECT * FROM EXE202_giftfallto.Users";
   const [rows] = await db.query(query);
   return rows;
 };
@@ -134,5 +140,7 @@ module.exports = {
   revokeRefreshToken,
   registerUser,
   updateUser,
+  getUser,
+  getUserByEmail,
   getAll,
 };

@@ -1,4 +1,5 @@
-const PaymentsService = require('./Payments.service');
+const { getUser, getUserByEmail } = require("../Users/Users.service");
+const PaymentsService = require("./Payments.service");
 
 /**
  * @swagger
@@ -78,12 +79,12 @@ const createPayment = async (req, res) => {
     res.status(200).json({
       success: 1,
       message: "Payment created successfully",
-      data: result
+      data: result,
     });
   } catch (error) {
     res.status(500).json({
       success: 0,
-      message: "Error: " + error.message
+      message: "Error: " + error.message,
     });
   }
 };
@@ -104,7 +105,7 @@ const createPayment = async (req, res) => {
  *               items:
  *                 type: object
  *                 properties:
- *                   
+ *
  *                   payment_method:
  *                     type: string
  *                     example: "Credit Card"
@@ -140,15 +141,26 @@ const createPayment = async (req, res) => {
 const getAllPayments = async (req, res) => {
   try {
     const results = await PaymentsService.getAll();
+
+    const data = await Promise.all(
+      results.map(async (result) => {
+        const user = await getUserByEmail(result.email);
+        return {
+          ...result,
+          user: user[0],
+        };
+      })
+    );
+
     res.status(200).json({
       success: 1,
       message: "Payments retrieved successfully",
-      data: results
+      data: data,
     });
   } catch (error) {
     res.status(500).json({
       success: 0,
-      message: "Error: " + error.message
+      message: "Error: " + error.message,
     });
   }
 };
@@ -228,12 +240,12 @@ const updatePayment = async (req, res) => {
     res.status(200).json({
       success: 1,
       message: "Payment updated successfully",
-      data: result
+      data: result,
     });
   } catch (error) {
     res.status(500).json({
       success: 0,
-      message: "Error: " + error.message
+      message: "Error: " + error.message,
     });
   }
 };
@@ -295,12 +307,12 @@ const getPaymentById = async (req, res) => {
     res.status(200).json({
       success: 1,
       message: "Payment retrieved successfully",
-      data: result
+      data: result,
     });
   } catch (error) {
     res.status(500).json({
       success: 0,
-      message: "Error: " + error.message
+      message: "Error: " + error.message,
     });
   }
 };
@@ -353,12 +365,12 @@ const deletePaymentById = async (req, res) => {
     res.status(200).json({
       success: 1,
       message: "Payment deleted successfully",
-      data: result
+      data: result,
     });
   } catch (error) {
     res.status(500).json({
       success: 0,
-      message: "Error: " + error.message
+      message: "Error: " + error.message,
     });
   }
 };
@@ -368,5 +380,5 @@ module.exports = {
   getAllPayments,
   updatePayment,
   getPaymentById,
-  deletePaymentById
+  deletePaymentById,
 };
