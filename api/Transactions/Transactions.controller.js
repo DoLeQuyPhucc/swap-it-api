@@ -144,10 +144,26 @@ const createTransaction = async (req, res) => {
 const getAllTransactions = async (req, res) => {
   try {
     const results = await getAll();
+
+
+    const data = await Promise.all(
+      results.map(async (result) => {
+        const buyer_item = await getItem(result.item_buyer_id);
+        const seller_item = await getItem(result.item_seller_id);
+        if ((buyer_item.item_status === "Sold" || seller_item.item_status === "Sold") && (result.transaction_status !== "Completed")) {
+          await update(result, result.transaction_id, "Not Completed");
+        }
+        return {
+          ...result,
+          buyer_item,
+          seller_item,
+        };
+      })
+    );
     return res.status(200).json({
       success: 1,
       message: "Transactions retrieved successfully",
-      data: results,
+      data: data,
     });
   } catch (err) {
     return res.status(500).json({
